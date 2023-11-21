@@ -9,9 +9,115 @@
 
     <context:annotation-config/>
     <context:component-scan base-package="com.intellibucket.lesson.springframework"/>
-    <bean id="renderer" class="com.intellibucket.lesson.springframework.renderer.MessageRenderer">
+    <bean id="renderer" class="com.intellibucket.lesson.springframework.renderer.MessageRenderer" scope="prototype"
+          autowire="byName"
+          lazy-init="true"
+    >
         <property name="messageProvider" ref="provider"/>
     </bean>
 
     <bean id="provider" class="com.intellibucket.lesson.springframework.provider.HelloWorldMessageProvider"/>
+
+    <bean name="person" lazy-init="true" destroy-method="preDestroy"
+          class="com.intellibucket.lesson.springframework.model.Person">
+        <constructor-arg index="0" value="John"/>
+        <constructor-arg index="1" value="Thomson"/>
+    </bean>
+
+    <bean id="factoryBeanTest" class="com.intellibucket.lesson.springframework.model.FactoryBeanTest"/>
+
+    <bean id="testBeanFromFactory" factory-bean="factoryBeanTest" factory-method="createInstance"
+          class="com.intellibucket.lesson.springframework.model.SpringTestBean"/>
+
+    <bean id="testBeanWithCons" scope="prototype" depends-on="provider"
+          class="com.intellibucket.lesson.springframework.model.SpringTestBean">
+        <constructor-arg index="0" value="Test Bean"/>
+        <constructor-arg index="1" value="30"/>
+        <constructor-arg index="2">
+            <array>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </array>
+        </constructor-arg>
+        <constructor-arg index="3" ref="person"/>
+        <constructor-arg index="4">
+            <list>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="5">
+            <set>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </set>
+        </constructor-arg>
+        <constructor-arg index="6">
+            <map>
+                <entry key="1" value="one"/>
+                <entry key="2" value="two"/>
+                <entry key="3" value="three"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean id="testBeanWithProperty" class="com.intellibucket.lesson.springframework.model.SpringTestBean">
+        <property name="name" value="Test Bean"/>
+        <property name="integer" value="30"/>
+        <property name="intArray">
+            <array>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </array>
+        </property>
+        <property name="person" ref="person"/>
+        <property name="stringList">
+            <list>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </list>
+        </property>
+        <property name="stringSet">
+            <set>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </set>
+        </property>
+        <property name="stringMap">
+            <map>
+                <entry key="1" value="one"/>
+                <entry key="2" value="two"/>
+                <entry key="3" value="three"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="parentModel"
+          scope="prototype"
+          abstract="true"
+          lazy-init="true"
+          primary="true"
+          init-method="init"
+          destroy-method="destroy"
+          name="abstractParentModel"
+          class="com.intellibucket.lesson.springframework.model.AbstractParentModel">
+    </bean>
+
+    <bean id="childModel"
+          scope="prototype"
+          parent="abstractParentModel"
+          lazy-init="true"
+          primary="true"
+          name="defaultChildModel"
+          class="com.intellibucket.lesson.springframework.model.ChildModel">
+        <constructor-arg index="0" value="Vugar"/>
+        <constructor-arg index="1" value="Mammadli"/>
+    </bean>
+
 </beans>
